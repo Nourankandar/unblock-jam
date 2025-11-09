@@ -1,0 +1,129 @@
+{
+    "level_name": "Level_7x7_Complex_Gates",
+    "board_settings": {
+        "rows": 7,
+        "cols": 7,
+        "exit_gates": [
+            {
+                "id": "TopGate1",
+                "side": "Top",
+                "contact_coords": [[0, 0], [0, 1]],
+                "is_wall": false,
+                "required_color": "orange",
+                "required_length": 2
+            },
+            {
+                "id": "TopGate3",
+                "side": "Top",
+                "contact_coords": [[0, 2], [0, 4]],
+                "is_wall": false,
+                "required_color": "red",
+                "required_length": 3
+            },
+            {
+                "id": "LeftGate",
+                "side": "Left",
+                "contact_coords": [[1, 0], [2, 0]],
+                "is_wall": false,
+                "required_color": "yellow",
+                "required_length": 2
+            },
+            {
+                "id": "TopGate2",
+                "side": "Top",
+                "contact_coords": [[0, 5], [0, 6]],
+                "is_wall": false,
+                "required_color": "red",
+                "required_length": 2
+            },
+            {
+                "id": "BottomGate",
+                "side": "Bottom",
+                "contact_coords": [[6, 0]],
+                "is_wall": false,
+                "required_color": "green",
+                "required_length": 1
+            },
+            {
+                "id": "RightGate",
+                "side": "Right",
+                "contact_coords": [[4, 6], [5, 6], [6, 6]],
+                "is_wall": false,
+                "required_color": "yellow",
+                "required_length": 3
+            }
+        ]
+    },
+    "static_elements": [
+        {
+            "id": "InternalWall1",
+            "occupying_coords": [
+                [3, 2] 
+            ]
+        }
+    ],
+
+    "blocks": [
+        {
+            "id": "G1",
+            "color": "green",
+            "is_target": false,
+            "start_row": 0,
+            "start_col": 6,
+            "shape_coords": [
+                [0, 0]
+            ]
+        },
+        {
+            "id": "Y1",
+            "color": "yellow",
+            "is_target": false,
+            "start_row": 1,
+            "start_col": 4, 
+            "shape_coords": [
+                [0, 0],
+                [1, 0],
+                [2, 0],
+                [2, -1]
+            ]
+        },
+        {
+            "id": "Y2",
+            "color": "yellow",
+            "is_target": false,
+            "start_row": 5,
+            "start_col": 2,
+            "shape_coords": [
+                [0, 0],
+                [0, 1],
+                [1, 0],
+                [1, 1]
+            ]
+        },
+        {
+            "id": "R1",
+            "color": "red",
+            "is_target": false,
+            "start_row": 2,
+            "start_col": 0,
+            "shape_coords": [
+                [0, 0],
+                [1, 0],
+                [2, 0],
+                [1, 1]
+            ]
+        },
+        {
+            "id": "O1",
+            "color": "orange",
+            "is_target": false,
+            "start_row": 5,
+            "start_col": 5,
+            "shape_coords": [
+                [0, 0],
+                [0, 1],
+                [1, 0]
+            ]
+        }
+    ]
+}
