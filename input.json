@@ -16,7 +16,7 @@
                 "id": "TopGate3",
                 "side": "Top",
                 "contact_coords": [[0, 2], [0, 4]],
-                "is_wall": false,
+                "is_wall": true,
                 "required_color": "red",
                 "required_length": 3
             },

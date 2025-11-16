@@ -27,7 +27,7 @@ data=load_data(file_path)
 
 if data is not None:
     game_board = Board(data)
-    # game_board.display_grid()
+    game_board.display_grid()
     root = tk.Tk()
     app = GameGUI(root, game_board)
     root.mainloop()

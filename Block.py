@@ -2,7 +2,7 @@ class Block:
     def __init__(self, block_data):
         self.id = block_data['id']
         self.color = block_data['color']
-        self.is_target = block_data['is_target']
+        # self.is_target = block_data['is_target']
         self.start_row = block_data['start_row']
         self.start_col = block_data['start_col']
         self.shape_coords = [tuple(c) for c in block_data['shape_coords']]
@@ -14,3 +14,29 @@ class Block:
             c_abs = self.start_col + c_rel
             absolute_coords.append((r_abs, c_abs))
         return absolute_coords
+    
+     #هي الدالة بتحسب طول وعرض الكتلة 
+    def get_dimensions(self):
+        if not self.shape_coords:
+            return (0, 0)
+        
+        r_rel_min = min(r_rel for r_rel, c_rel in self.shape_coords)
+        r_rel_max = max(r_rel for r_rel, c_rel in self.shape_coords)
+        c_rel_min = min(c_rel for r_rel, c_rel in self.shape_coords)
+        c_rel_max = max(c_rel for r_rel, c_rel in self.shape_coords)
+
+        rows_span = r_rel_max - r_rel_min + 1
+        cols_span = c_rel_max - c_rel_min + 1
+        
+        return (rows_span, cols_span)
+    
+    def copy(self):
+        block_data = {
+            'id': self.id,
+            'color': self.color,
+            'start_row': self.start_row,
+            'start_col': self.start_col,
+            'shape_coords': [[r, c] for r, c in self.shape_coords]
+        }
+        new_block = Block(block_data)
+        return new_block
