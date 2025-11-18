@@ -3,6 +3,9 @@ import tkinter as tk
 from tkinter import *
 from Board import Board 
 from tkinter import messagebox
+import time
+import datetime
+
 class GameGUI:
     CELL_SIZE = 60 
     COLORS = {
@@ -11,7 +14,12 @@ class GameGUI:
         "red": "red",
         "orange": "orange",
         "W": "brown",  
-        0: "gray"      
+        0: "gray",
+        "darkblue": "midnightblue",  # يمكنك اختيار أي درجة من الأزرق الغامق
+        "purple": "mediumpurple",    # تم اختيار لون بنفسجي
+        "cyan": "cyan",
+        "blue":"blue"
+
     }
     PAD = 50
     FRAME_PADDING = 50
@@ -21,17 +29,11 @@ class GameGUI:
         self.initial_board_state = Board_instance.deep_copy()
         self.master = master
         self.Board = Board_instance
-        
         self.width = self.Board.cols * self.CELL_SIZE 
         self.height = self.Board.rows * self.CELL_SIZE
-
-
         self.selected_block_id = None
         self.start_x = None
         self.start_y = None
-        
-
-
         master.title("Unblock jam") 
         master.geometry("+400+40")
         label= Label( master,text="Un Block Jam ",font=('Times New Roman',25))
@@ -41,14 +43,12 @@ class GameGUI:
         self.canvas.pack(fill=tk.BOTH, expand=True) 
         self.canvas.pack(padx=self.PAD, pady=self.PAD)
         self.frame.pack(expand=True, fill=tk.BOTH)
-
-
         self.canvas.bind("<Button-1>", self.on_click)
         self.canvas.bind("<ButtonRelease-1>", self.on_release)
         self.add_button(self.frame,"Undo",self.handle_undo)
         self.add_button(self.frame,"Reset",self.handle_reset)
-        
         self.draw_Board()
+
     def add_button(self,frame,text,command):
         button = Button(frame,text=text,font=('Times New Roman',20))
         button.config(command=command)
@@ -64,12 +64,24 @@ class GameGUI:
         OFFSET = 2
         for r in range(rows +1 ):
             y = r * self.CELL_SIZE +OFFSET 
-            self.canvas.create_line(OFFSET , y, self.CELL_SIZE*cols+OFFSET , y, fill="black", width=2)
+            self.canvas.create_line(OFFSET+self.CELL_SIZE , y, self.CELL_SIZE*cols+OFFSET , y, fill="white", width=2)
             
         for c in range(cols +1 ):
             x = c * self.CELL_SIZE+OFFSET 
-            self.canvas.create_line(x, OFFSET , x,self.CELL_SIZE*rows+OFFSET, fill="black", width=2)
-
+            self.canvas.create_line(x, OFFSET , x,self.CELL_SIZE*rows+OFFSET, fill="white", width=2)
+        
+                
+        gate_cells_info = {}
+        for gate_id, gate_obj in self.Board.ExitGates.items():
+            required_color_name = gate_obj.required_color.lower()
+            fill_color = self.COLORS.get(required_color_name, "lightgray") 
+            
+            for r, c in gate_obj.contact_coords:
+                if 0 <= r < rows and 0 <= c < cols:
+                    gate_cells_info[(r, c)] = {
+                        'fill': fill_color,
+                        'text': f"{gate_obj.required_color[0].upper()}/{gate_obj.required_length}"
+                    }
         for r in range(rows):
             for c in range(cols):
                 cell_content = self.Board.Grid[r][c]
@@ -79,8 +91,15 @@ class GameGUI:
                 y2 = y1 + self.CELL_SIZE
 
                 fill_color = self.COLORS[0] 
-                outline_color = "black"
-
+                if (r, c) in gate_cells_info:
+                    info = gate_cells_info[(r, c)]
+                    fill_color = info['fill']
+                    text_to_draw = info['text']
+                else:
+                    fill_color = self.COLORS[0] 
+                    text_to_draw = "" 
+                
+                outline_color="white"
                 if cell_content != 0:
                     text_to_draw = str(cell_content)
                     if cell_content == 'W':
@@ -89,132 +108,22 @@ class GameGUI:
                     elif isinstance(cell_content, str): 
                         if cell_content in self.Board.BlockObjects:
                             block_obj = self.Board.BlockObjects[cell_content]
-                        # block_obj = self.Board.BlockObjects[cell_content]
-                            fill_color = self.COLORS.get(block_obj.color, "gray")
+                            fill_color = self.COLORS.get(block_obj.color)
+                            
                     else:
+                        
                         self.Board.Grid[r][c] = 0
                         continue
                         
                             
-                    self.canvas.create_rectangle(x1, y1, x2, y2, fill=fill_color, outline=outline_color, width=3)
-                    self.canvas.create_text(x1 + self.CELL_SIZE/2, y1 + self.CELL_SIZE/2, text=str(cell_content), fill="black")
-        
-        self.draw_edges1()
-        
-    def draw_edges(self):
-        cell_size = self.CELL_SIZE
-        rows = self.Board.rows
-        cols = self.Board.cols
-        OFFSET =2
-        PAD = self.FRAME_PADDING
-        for gate_id, gate in self.Board.ExitGates.items():
-            fill_color = self.COLORS.get(gate.required_color, "gray")
-            outline_color = "black"
-            print(gate)
-            for r_contact, c_contact in gate.contact_coords:
-                x_start = c_contact * cell_size + OFFSET
-                y_start = r_contact * cell_size + OFFSET
-                if gate.side == "Top":
-                    
-                    x1 = x_start
-                    y2 = OFFSET 
-                    x2 = x_start + cell_size
-                    y1 = y2 - cell_size/2 
-                elif gate.side == "Bottom":
-                    x1 = x_start
-                    y1 = rows * cell_size + OFFSET 
-                    x2 = x_start + cell_size
-                    y2 = y1 + cell_size/2
-                    
-                elif gate.side == "Left":
-                    y1 = y_start
-                    x2 = OFFSET 
-                    y2 = y_start + cell_size
-                    x1 = x2 - cell_size /2
-                    
-                elif gate.side == "Right":
-                    y1 = y_start
-                    x1 = cols * cell_size + OFFSET 
-                    y2 = y_start + cell_size
-                    x2 = x1 + cell_size /2
+                self.canvas.create_rectangle(x1, y1, x2, y2, fill=fill_color, outline=outline_color, width=3)
                 
-                
-
-                draw_x1 = x1 + PAD
-                draw_y1 = y1 + PAD
-                draw_x2 = x2 + PAD
-                draw_y2 = y2 + PAD
-                self.frame.create_rectangle(draw_x1, draw_y1, draw_x2, draw_y2, 
-                                             fill=fill_color, 
-                                             outline=outline_color, 
-                                             width=3,
-                                             tag="gate_drawings")
-                
-    def draw_edges1(self):
-        """ترسم البوابات على أطراف اللوحة (على الـ frame)."""
-        cell_size = self.CELL_SIZE
-        rows = self.Board.rows
-        cols = self.Board.cols
-        
-        OFFSET = 4 
-        
-        canvas_x_start = self.PAD
-        canvas_y_start = self.PAD
-        canvas_x_end = self.PAD + self.width
-        canvas_y_end = self.PAD + self.height
-
-        for gate in self.Board.ExitGates.values():
-            
-            x1, y1, x2, y2 = 0, 0, 0, 0
-            required_color_name = gate.required_color.lower()
-            
-            fill_color = self.COLORS.get(required_color_name, "lightgray") 
-            
-            outline_color = "black"
-            
-            r_contact, c_contact = gate.contact_coords[0]
-            if gate.side == "Top":
-                y_start = canvas_y_start - cell_size / 2
-                y_end = canvas_y_start
-                x_start = canvas_x_start + c_contact * cell_size
-                x_end = x_start + len(gate.contact_coords) * cell_size
-                x1, y1, x2, y2 = x_start, y_start, x_end, y_end
-
-            elif gate.side == "Bottom":
-                y_start = canvas_y_end
-                y_end = canvas_y_end + cell_size / 2
-                x_start = canvas_x_start + c_contact * cell_size
-                x_end = x_start + len(gate.contact_coords) * cell_size
-                x1, y1, x2, y2 = x_start, y_start, x_end, y_end
-                
-            elif gate.side == "Left":
-                x_start = canvas_x_start - cell_size / 2
-                x_end = canvas_x_start
-                y_start = canvas_y_start + r_contact * cell_size
-                y_end = y_start + len(gate.contact_coords) * cell_size
-                x1, y1, x2, y2 = x_start, y_start, x_end, y_end
-
-            elif gate.side == "Right":
-                x_start = canvas_x_end
-                x_end = canvas_x_end + cell_size / 2
-                y_start = canvas_y_start + r_contact * cell_size
-                y_end = y_start + len(gate.contact_coords) * cell_size
-
-                x1, y1, x2, y2 = x_start, y_start, x_end, y_end
-
-            self.frame.create_rectangle(x1, y1, x2, y2, 
-                                         fill=fill_color, 
-                                         outline=outline_color, 
-                                         width=3,
-                                         tag="gate_drawings")
-            
-            symbol_text = f"{gate.required_color[0].upper()}/{gate.required_length}"
-            self.frame.create_text(x1 + (x2 - x1) / 2, y1 + (y2 - y1) / 2, 
-                                    text=symbol_text, 
-                                    fill="white", 
-                                    font=('Arial', 8, 'bold'),
-                                    tag="gate_drawings")
-
+                if text_to_draw:
+                     fill_text_color = "black" if fill_color != self.COLORS['W'] else "white"
+                     self.canvas.create_text(x1 + self.CELL_SIZE/2, y1 + self.CELL_SIZE/2, 
+                                             text=text_to_draw, 
+                                             fill=fill_text_color)
+   
     
     def cell_to_coords(self, r, c):
         """تحويل إحداثيات الصف/العمود إلى إحداثيات بكسل على الـ canvas."""
@@ -231,16 +140,25 @@ class GameGUI:
 
         if 0 <= row < self.Board.rows and 0 <= col < self.Board.cols:
             block_id = self.Board.Grid[row][col]
-            print(block_id)
-            if block_id != 0:
+            print(f"Clicked Coordinates: (Row={row}, Col={col})")
+            
+            if block_id != 0 and block_id != 'W'and block_id!='gate':
+                
+                block_to_exit = self.Board.BlockObjects[block_id]
+                nn= self.Board.check_gate_arround(block_id)
+                for n in nn :
+                    print(n)
                 self.selected_block_id = block_id
                 self.start_x = event.x
                 self.start_y = event.y
+                
             else:
                 self.selected_block_id = None
+                
         else:
             self.selected_block_id = None
-    
+            print("Clicked outside board limits.")
+        
 
     def on_release(self, event):
         if self.selected_block_id is None:
@@ -265,21 +183,56 @@ class GameGUI:
             if abs(final_row_delta) == 0 and abs(final_col_delta) == 0:
                  self.selected_block_id = None
                  return
-        new_state = self.Board.make_move(block_id, final_row_delta, final_col_delta)
-        if new_state:
-            self.history_stack.append(self.Board.deep_copy())
-            self.Board = new_state
-            self.draw_Board()
-        else:
-             print("🛑 فشلت الحركة: الحركة غير صالحة أو مغلقة. (الحالة لم تتغير)")
+        
+        move_result = self.Board.make_move(block_id, final_row_delta, final_col_delta)
+        if move_result is not None:
+            new_state, is_exit = move_result
+            if new_state:
+                self.history_stack.append(self.Board.deep_copy())
+                self.Board = new_state
+                self.draw_Board()
+                # new_state.display_grid()
+                if is_exit:
+                    print(True)
+                    block_to_exit = self.Board.BlockObjects[block_id]
+                    final_coords_on_grid = [
+                        (r, c) for r, c in block_to_exit.get_absolute_coords()
+                        if 0 <= r < self.Board.rows and 0 <= c < self.Board.cols
+                    ]
+                    delay_milliseconds = 500
+                    self.master.after(
+                        delay_milliseconds, 
+                        lambda: self.finalize_exit(block_id, final_coords_on_grid)
+                    )
+                    
+            else:
+                print("🛑 فشلت الحركة: الحركة غير صالحة أو مغلقة. (الحالة لم تتغير)")
 
-        self.selected_block_id = None
-        self.start_x = None
-        self.start_y = None
+            self.selected_block_id = None
+            self.start_x = None
+            self.start_y = None
+            
+    def finalize_exit(self, block_id, final_coords_on_grid):
+        """
+        تُنفذ هذه الدالة بعد مهلة زمنية لإزالة الكتلة نهائياً من اللوحة (Grid) وكتعريف (BlockObject).
+        """
+        for r_abs, c_abs in final_coords_on_grid:
+            if 0 <= r_abs < self.Board.rows and 0 <= c_abs < self.Board.cols:
+                if self.Board.Grid[r_abs][c_abs] == block_id:
+                    self.Board.Grid[r_abs][c_abs] = 0
+
+        if block_id in self.Board.BlockObjects:
+            del self.Board.BlockObjects[block_id]
+            
+        self.draw_Board()
+        self.Board.display_grid() 
+
         if self.Board.is_final_state():
-            messagebox.showinfo("تهانينا!", "🎉 تم حل اللغز بنجاح وإفراغ الرقعة!")
-            print("تهانينا! 🎉 تم حل اللغز وإفراغ الرقعة.")
-    
+                messagebox.showinfo("تهانينا!", "🎉 تم حل اللغز بنجاح وإفراغ الرقعة!")
+                print("تهانينا! 🎉 تم حل اللغز وإفراغ الرقعة.")
+                self.handle_reset()
+        
+
     def handle_undo(self):
         if self.history_stack:
             self.Board = self.history_stack.pop()

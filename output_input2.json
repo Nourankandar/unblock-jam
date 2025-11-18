@@ -1,0 +1,517 @@
+{
+    "level_name": "Converted_Level",
+    "board_settings": {
+        "rows": 11,
+        "cols": 8,
+        "exit_gates": [
+            {
+                "id": "E1",
+                "side": "Left",
+                "contact_coords": [
+                    [
+                        1,
+                        0
+                    ],
+                    [
+                        2,
+                        0
+                    ]
+                ],
+                "is_wall": false,
+                "required_color": "yellow",
+                "required_length": 2
+            },
+            {
+                "id": "E2",
+                "side": "Right",
+                "contact_coords": [
+                    [
+                        1,
+                        7
+                    ],
+                    [
+                        2,
+                        7
+                    ]
+                ],
+                "is_wall": false,
+                "required_color": "yellow",
+                "required_length": 2
+            },
+            {
+                "id": "E3",
+                "side": "Top",
+                "contact_coords": [
+                    [
+                        0,
+                        1
+                    ],
+                    [
+                        0,
+                        2
+                    ]
+                ],
+                "is_wall": false,
+                "required_color": "red",
+                "required_length": 2
+            },
+            {
+                "id": "E4",
+                "side": "Top",
+                "contact_coords": [
+                    [
+                        0,
+                        3
+                    ],
+                    [
+                        0,
+                        4
+                    ]
+                ],
+                "is_wall": false,
+                "required_color": "blue",
+                "required_length": 2
+            },
+            {
+                "id": "E5",
+                "side": "Top",
+                "contact_coords": [
+                    [
+                        0,
+                        5
+                    ],
+                    [
+                        0,
+                        6
+                    ]
+                ],
+                "is_wall": false,
+                "required_color": "orange",
+                "required_length": 2
+            },
+            {
+                "id": "E6",
+                "side": "Left",
+                "contact_coords": [
+                    [
+                        8,
+                        0
+                    ],
+                    [
+                        9,
+                        0
+                    ]
+                ],
+                "is_wall": false,
+                "required_color": "green",
+                "required_length": 2
+            },
+            {
+                "id": "E7",
+                "side": "Bottom",
+                "contact_coords": [
+                    [
+                        10,
+                        3
+                    ],
+                    [
+                        10,
+                        4
+                    ]
+                ],
+                "is_wall": false,
+                "required_color": "purple",
+                "required_length": 2
+            },
+            {
+                "id": "E8",
+                "side": "Right",
+                "contact_coords": [
+                    [
+                        8,
+                        7
+                    ],
+                    [
+                        9,
+                        7
+                    ]
+                ],
+                "is_wall": false,
+                "required_color": "cyan",
+                "required_length": 2
+            }
+        ]
+    },
+    "static_elements": [
+        {
+            "occupying_coords": [
+                [
+                    0,
+                    0
+                ],
+                [
+                    3,
+                    0
+                ],
+                [
+                    4,
+                    0
+                ],
+                [
+                    5,
+                    0
+                ],
+                [
+                    6,
+                    0
+                ],
+                [
+                    7,
+                    0
+                ],
+                [
+                    10,
+                    0
+                ],
+                [
+                    10,
+                    1
+                ],
+                [
+                    10,
+                    2
+                ],
+                [
+                    10,
+                    5
+                ],
+                [
+                    10,
+                    6
+                ],
+                [
+                    10,
+                    7
+                ],
+                [
+                    7,
+                    7
+                ],
+                [
+                    6,
+                    7
+                ],
+                [
+                    5,
+                    7
+                ],
+                [
+                    4,
+                    7
+                ],
+                [
+                    3,
+                    7
+                ],
+                [
+                    0,
+                    7
+                ],
+                [
+                    3,
+                    3
+                ],
+                [
+                    4,
+                    3
+                ],
+                [
+                    3,
+                    4
+                ],
+                [
+                    4,
+                    4
+                ],
+                [
+                    7,
+                    3
+                ],
+                [
+                    7,
+                    4
+                ]
+            ]
+        }
+    ],
+    "blocks": [
+        {
+            "id": "B1",
+            "color": "yellow",
+            "is_target": false,
+            "start_row": 1,
+            "start_col": 3,
+            "shape_coords": [
+                [
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1
+                ],
+                [
+                    1,
+                    0
+                ],
+                [
+                    1,
+                    1
+                ]
+            ],
+            "direction": "horizontal"
+        },
+        {
+            "id": "B2",
+            "color": "yellow",
+            "is_target": false,
+            "start_row": 5,
+            "start_col": 4,
+            "shape_coords": [
+                [
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1
+                ],
+                [
+                    1,
+                    0
+                ],
+                [
+                    1,
+                    1
+                ]
+            ]
+        },
+        {
+            "id": "B3",
+            "color": "red",
+            "is_target": false,
+            "start_row": 1,
+            "start_col": 5,
+            "shape_coords": [
+                [
+                    0,
+                    1
+                ],
+                [
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    1
+                ]
+            ]
+        },
+        {
+            "id": "B4",
+            "color": "red",
+            "is_target": false,
+            "start_row": 8,
+            "start_col": 1,
+            "shape_coords": [
+                [
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0
+                ],
+                [
+                    1,
+                    1
+                ]
+            ]
+        },
+        {
+            "id": "B5",
+            "color": "blue",
+            "is_target": false,
+            "start_row": 4,
+            "start_col": 1,
+            "shape_coords": [
+                [
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0
+                ]
+            ]
+        },
+        {
+            "id": "B6",
+            "color": "blue",
+            "is_target": false,
+            "start_row": 6,
+            "start_col": 6,
+            "shape_coords": [
+                [
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0
+                ]
+            ]
+        },
+        {
+            "id": "B7",
+            "color": "orange",
+            "is_target": false,
+            "start_row": 1,
+            "start_col": 1,
+            "shape_coords": [
+                [
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1
+                ],
+                [
+                    1,
+                    0
+                ]
+            ]
+        },
+        {
+            "id": "B8",
+            "color": "orange",
+            "is_target": false,
+            "start_row": 8,
+            "start_col": 5,
+            "shape_coords": [
+                [
+                    1,
+                    1
+                ],
+                [
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    1
+                ]
+            ]
+        },
+        {
+            "id": "B9",
+            "color": "green",
+            "is_target": false,
+            "start_row": 8,
+            "start_col": 3,
+            "shape_coords": [
+                [
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1
+                ],
+                [
+                    0,
+                    2
+                ]
+            ],
+            "direction": "horizontal"
+        },
+        {
+            "id": "B10",
+            "color": "purple",
+            "is_target": false,
+            "start_row": 6,
+            "start_col": 1,
+            "shape_coords": [
+                [
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    0
+                ]
+            ]
+        },
+        {
+            "id": "B11",
+            "color": "purple",
+            "is_target": false,
+            "start_row": 4,
+            "start_col": 6,
+            "shape_coords": [
+                [
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0
+                ]
+            ]
+        },
+        {
+            "id": "B12",
+            "color": "cyan",
+            "is_target": false,
+            "start_row": 9,
+            "start_col": 3,
+            "shape_coords": [
+                [
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1
+                ]
+            ],
+            "direction": "horizontal"
+        },
+        {
+            "id": "B13",
+            "color": "cyan",
+            "is_target": false,
+            "start_row": 5,
+            "start_col": 2,
+            "shape_coords": [
+                [
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1
+                ],
+                [
+                    1,
+                    0
+                ],
+                [
+                    1,
+                    1
+                ]
+            ]
+        }
+    ]
+}

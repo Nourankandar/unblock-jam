@@ -22,7 +22,7 @@ def load_data(file_path):
         print(f"🚫 حدث خطأ غير متوقع أثناء القراءة: {e}")
         return None
 
-file_path="input.json"
+file_path="input2.json"
 data=load_data(file_path)
 
 if data is not None:
