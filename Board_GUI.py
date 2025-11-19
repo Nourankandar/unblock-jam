@@ -29,13 +29,14 @@ class GameGUI:
         self.initial_board_state = Board_instance.deep_copy()
         self.master = master
         self.Board = Board_instance
+        self.exited_blocks_count = 0
         self.width = self.Board.cols * self.CELL_SIZE 
         self.height = self.Board.rows * self.CELL_SIZE
         self.selected_block_id = None
         self.start_x = None
         self.start_y = None
         master.title("Unblock jam") 
-        master.geometry("+400+40")
+        master.geometry("+400+10")
         label= Label( master,text="Un Block Jam ",font=('Times New Roman',25))
         label.pack()
         self.frame = tk.Canvas(master, bg="darkgray")
@@ -109,7 +110,21 @@ class GameGUI:
                         if cell_content in self.Board.BlockObjects:
                             block_obj = self.Board.BlockObjects[cell_content]
                             fill_color = self.COLORS.get(block_obj.color)
-                            
+                            remaining_moves = block_obj.moves_to_unlock
+                            text_to_draw  = block_obj.id
+                            if block_obj.direction == "horizontal":
+                                text_to_draw = "--"
+                            if block_obj.direction == "vertical":
+                                text_to_draw = "|"
+                            if remaining_moves > 0:
+                                text_to_draw  = str(remaining_moves)
+                                fill_color = "white"
+                                
+                                self.canvas.create_text(x1 + self.CELL_SIZE/2, y1 + self.CELL_SIZE/2, 
+                                                        text=text_to_draw ,
+                                                        fill="black", 
+                                                        font=('Times New Roman', 14, 'bold'),
+                                                        tag="lock_indicator")
                     else:
                         
                         self.Board.Grid[r][c] = 0
@@ -181,13 +196,16 @@ class GameGUI:
             final_row_delta = 0
         else:
             if abs(final_row_delta) == 0 and abs(final_col_delta) == 0:
-                 self.selected_block_id = None
-                 return
+                self.selected_block_id = None
+                return
         
         move_result = self.Board.make_move(block_id, final_row_delta, final_col_delta)
+
+        
         if move_result is not None:
             new_state, is_exit = move_result
             if new_state:
+                
                 self.history_stack.append(self.Board.deep_copy())
                 self.Board = new_state
                 self.draw_Board()
@@ -211,7 +229,7 @@ class GameGUI:
             self.selected_block_id = None
             self.start_x = None
             self.start_y = None
-            
+
     def finalize_exit(self, block_id, final_coords_on_grid):
         """
         تُنفذ هذه الدالة بعد مهلة زمنية لإزالة الكتلة نهائياً من اللوحة (Grid) وكتعريف (BlockObject).
@@ -223,7 +241,9 @@ class GameGUI:
 
         if block_id in self.Board.BlockObjects:
             del self.Board.BlockObjects[block_id]
-            
+            self.Board.decrement_moves_to_unlock() 
+            print(f"🎉 تم تأكيد خروج الكتلة {block_id}.")
+
         self.draw_Board()
         self.Board.display_grid() 
 
@@ -241,6 +261,7 @@ class GameGUI:
         else:
             print("⚠️ لا يوجد حركات سابقة للتراجع عنها.")
     
+
     def handle_reset(self):
         self.Board = self.initial_board_state.deep_copy()
         self.history_stack = []

@@ -6,6 +6,7 @@ class Block:
         self.start_col = block_data['start_col']
         self.shape_coords = [tuple(c) for c in block_data['shape_coords']]
         self.direction = block_data.get('direction', 'both')
+        self.moves_to_unlock = block_data.get('moves_to_unlock', 0)
     
     def get_absolute_coords(self):
         absolute_coords = []
@@ -15,7 +16,6 @@ class Block:
             absolute_coords.append((r_abs, c_abs))
         return absolute_coords
     
-     #هي الدالة بتحسب طول وعرض الكتلة 
     def get_dimensions(self):
         if not self.shape_coords:
             return (0, 0)
@@ -36,7 +36,9 @@ class Block:
             'color': self.color,
             'start_row': self.start_row,
             'start_col': self.start_col,
-            'shape_coords': [[r, c] for r, c in self.shape_coords]
+            'shape_coords': [[r, c] for r, c in self.shape_coords],
+            'direction': self.direction,  
+            'moves_to_unlock': self.moves_to_unlock
         }
         new_block = Block(block_data)
         return new_block

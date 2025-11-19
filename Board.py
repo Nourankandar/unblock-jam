@@ -12,17 +12,12 @@ class Board:
         self.BlockObjects = {} 
         self.StaticElements = set() 
         self.ExitGates = {} 
-
-        
-        
+        self.moves_to_unlock = 0
         self.initialize_board(data_map)
     def deep_copy(self):
         return copy.deepcopy(self)
     
     def initialize_board(self, data):
-        """
-        تقوم بتحويل بيانات JSON الخام إلى حالة اللعبة وكائنات تفاعلية.
-        """
         settings = data['board_settings']
         self.rows = settings['rows']
         self.cols = settings['cols']
@@ -51,8 +46,16 @@ class Board:
         for block_data in data['blocks']:
             block = Block(block_data)
             self.BlockObjects[block.id] = block
+
             for r_abs, c_abs in block.get_absolute_coords():
+                if block.direction == "horizontal":
+                    marker = '--'
+                elif block.direction == "vertical":
+                    marker = '|'
+                else:
+                    marker = block.id 
                 if 0 <= r_abs < self.rows and 0 <= c_abs < self.cols:
+                    
                     if self.Grid[r_abs][c_abs] == 'W':
                         print(f" خطأ في التصميم الأولي: الكتلة {block.id} تتداخل مع عنصر ثابت في الموقع ({r_abs}, {c_abs})")
                     elif self.Grid[r_abs][c_abs] != 0:
@@ -62,15 +65,38 @@ class Board:
                     print(f" خطأ في التصميم الأولي: الكتلة {block.id} تبدأ خارج حدود اللوحة.")
     
     def display_grid(self):
-        print("\n--- حالة اللوحة الحالية (Grid) ---")
-        for row in self.Grid:
-            print("    |    ".join(map(str, row)))
-        print("--------------------------------")
-
+        """
+        تطبع الشبكة في الكونسول لغرض التتبع/التصحيح.
+        """
+        print("-" * (self.cols * 4 + 1))
+        for r in range(self.rows):
+            row_str = "| "
+            for c in range(self.cols):
+                content = self.Grid[r][c]
+                if content == 0:
+                    row_str += "  | "
+                elif content == 'W':
+                    row_str += "W | "
+                elif content == 'E':
+                    row_str += "E | "
+                elif content == 'gate':
+                    row_str += "G | "
+                # عند العرض النصي، نستخدم هوية الكتلة، ثم نحدد علامة الاتجاه للعرض
+                elif isinstance(content, str) and content in self.BlockObjects:
+                    block = self.BlockObjects[content]
+                    if block.direction == "horizontal":
+                        row_str += "--| "
+                    elif block.direction == "vertical":
+                        row_str += "| | "
+                    else:
+                        row_str += f"{content:2}| " 
+                else:
+                    row_str += f"{content}| " 
+            print(row_str)
+            print("-" * (self.cols * 4 + 1))
 #------------------------------------------------------------------------------------------
 #_________________________MOVES METHODS________________________________
-
-    
+# هي الدالة لتجيب كلشي بوابات حولين الكتلةة
     def check_gate_arround(self,block_id,block_obj=None):
         if block_obj is None:
             if block_id not in self.BlockObjects:
@@ -91,22 +117,22 @@ class Board:
                             
                             
         return gates_objects 
-
+#هي الدالة لتتحقق اذا الكتلة بتخرج من البوابة او لا 
     def check_ifCanBolckGetOutThisGate(self,block_id,gates_objects,final_coords=None):
         if block_id not in self.BlockObjects:
             return False
         block = self.BlockObjects[block_id]
         if final_coords is not None:
-            print("hello final coords")
+            # print("hello final coords")
             source_coords = final_coords
         else:
             source_coords = block.get_absolute_coords()
 
         block_coords = set(source_coords)
-        print("hello block")
-        print(gates_objects)
+        # print("hello block")
+        # print(gates_objects)
         for gate in gates_objects:
-            print("hello ")
+            # print("hello ")
             if block.color.lower() == gate.required_color.lower():
                 
                 is_fully_within_gate_range = True
@@ -162,7 +188,12 @@ class Board:
                 return False
                     
         return True
-    
+    def decrement_moves_to_unlock(self):
+        for block_id, block in self.BlockObjects.items():
+            if block.moves_to_unlock > 0:
+                block.moves_to_unlock -= 1
+                print(f"📉 تم تحديث قفل الكتلة {block_id}. القيمة الجديدة: {block.moves_to_unlock}")
+
     def make_move(self, block_id, row_delta, col_delta):
 
         if block_id not in self.BlockObjects:
@@ -183,7 +214,11 @@ class Board:
         if not self.is_valid_position(block_id, new_coords):
             print(f"🛑 فشلت الحركة: اصطدام داخلي أو خروج غير مسموح به للكتلة {block_id}.")
             return None
-    
+        
+        if old_block.moves_to_unlock > 0:
+            print(f"🛑 الكتلة {block_id} مقفلة. تحتاج إلى {old_block.moves_to_unlock} عملية إخراج أخرى لفتحها.")
+            return None
+        
         new_board = self.deep_copy()
         for r_abs, c_abs in old_block.get_absolute_coords():
             if 0 <= r_abs < new_board.rows and 0 <= c_abs < new_board.cols:
@@ -211,10 +246,6 @@ class Board:
                 
             return new_board,False
     
-    
-    
-    
-
     def is_final_state(self):
         return len(self.BlockObjects) == 0
         
