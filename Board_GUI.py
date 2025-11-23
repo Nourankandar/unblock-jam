@@ -54,7 +54,7 @@ class GameGUI:
         button = Button(frame,text=text,font=('Times New Roman',20))
         button.config(command=command)
         button.pack(side="left")
-
+    #استخدمت gemini لمساعدتي في رسم الرقعة وبعض التفاصيل هنا
     def draw_Board(self):
         self.canvas.delete("all")
         self.frame.delete("gate_drawings") 
