@@ -14,6 +14,7 @@ class Board:
         self.ExitGates = {} 
         self.moves_to_unlock = 0
         self.initialize_board(data_map)
+
     def deep_copy(self):
         return copy.deepcopy(self)
     
@@ -21,6 +22,7 @@ class Board:
         settings = data['board_settings']
         self.rows = settings['rows']
         self.cols = settings['cols']
+        #بيعمل المصفوفة صفيرة
         self.Grid = [[0 for _ in range(self.cols)] for _ in range(self.rows)]
         
         print(f" Board is created {self.rows}x{self.cols}")
@@ -63,11 +65,8 @@ class Board:
                     self.Grid[r_abs][c_abs] = block.id
                 else:
                     print(f" خطأ في التصميم الأولي: الكتلة {block.id} تبدأ خارج حدود اللوحة.")
-    
+    #هاد التابع جبتو من gemini
     def display_grid(self):
-        """
-        تطبع الشبكة في الكونسول لغرض التتبع/التصحيح.
-        """
         print("-" * (self.cols * 4 + 1))
         for r in range(self.rows):
             row_str = "| "
@@ -81,7 +80,6 @@ class Board:
                     row_str += "E | "
                 elif content == 'gate':
                     row_str += "G | "
-                # عند العرض النصي، نستخدم هوية الكتلة، ثم نحدد علامة الاتجاه للعرض
                 elif isinstance(content, str) and content in self.BlockObjects:
                     block = self.BlockObjects[content]
                     if block.direction == "horizontal":
@@ -97,6 +95,7 @@ class Board:
 #------------------------------------------------------------------------------------------
 #_________________________MOVES METHODS________________________________
 # هي الدالة لتجيب كلشي بوابات حولين الكتلةة
+#بالتوابع اللي جاية gemini كتبلي ال print ونسقلي الكود بعد ما عملتن بس اللوجيك انا عملتو
     def check_gate_arround(self,block_id,block_obj=None):
         if block_obj is None:
             if block_id not in self.BlockObjects:
@@ -188,6 +187,7 @@ class Board:
                 return False
                     
         return True
+    #هاد تابع القطع المجمدة 
     def decrement_moves_to_unlock(self):
         for block_id, block in self.BlockObjects.items():
             if block.moves_to_unlock > 0:
@@ -256,7 +256,7 @@ class Board:
 
 
     # توابع قديمة؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟
-    #لاااااا اريدها الان
+    #لاااااا اريدها الان عملتا بس ما استخدمتا
     #-------------------------------------------------------------------------
 
     def get_possible_moves(self, block_id):
@@ -271,7 +271,6 @@ class Board:
         block = self.BlockObjects[block_id]
         possible_moves = []
         
-        # نحدد جميع الاتجاهات الأربعة الممكنة (خطوة واحدة في كل اتجاه)
         directions_to_check = [
             (0, 1),   # يمين
             (0, -1),  # يسار
@@ -281,56 +280,40 @@ class Board:
         
         for r_step, c_step in directions_to_check:
             
-            # r_delta و c_delta هما مقدار الإزاحة الكلي عن موقع البداية
             r_delta, c_delta = r_step, c_step 
             
-            # نبدأ من خطوة واحدة ونزيدها تدريجياً
             while True:
                 new_start_row = block.start_row + r_delta
                 new_start_col = block.start_col + c_delta
                 new_coords = self.calculate_coords(block, new_start_row, new_start_col)
 
-                # 1. فحص الاصطدام الداخلي
                 if not self.is_valid_position(block_id, new_coords):
-                    # فشلت الحركة بسبب اصطدام داخلي (كتلة أخرى/جدار ثابت)
                     break 
 
-                # 2. فحص الحدود وتحديد المصير
                 is_fully_inside = True
                 
-                # نتحقق مما إذا كانت أي إحداثية جديدة خارج حدود اللوحة
                 for r_abs, c_abs in new_coords:
                     if not (0 <= r_abs < self.rows and 0 <= c_abs < self.cols):
                         is_fully_inside = False
                         break
                 
                 if is_fully_inside:
-                    # الحركة صالحة وداخلية بالكامل، نضيفها ونفحص الخطوة التالية
                     possible_moves.append((r_delta, c_delta))
                     
-                    # ننتقل للخطوة التالية في نفس الاتجاه
                     r_delta += r_step
                     c_delta += c_step
                 
                 else:
-                    # محاولة خروج/تجاوز جزئي للحدود. يجب الآن تطبيق الشرط الصارم الذي اتفقنا عليه في apply_move
                     
-                    # نتحقق مما إذا كانت هذه الحركة هي خروج كامل عبر بوابة مسموح بها.
                     if self.check_for_exit(block_id, new_coords):
-                        # الخروج مسموح به، نضيفه وننهي
                         possible_moves.append((r_delta, c_delta))
                     
-                    # في كلتا الحالتين (خروج ناجح أو محاولة تجاوز جزئي مرفوضة)، نتوقف عن الفحص
-                    # لأن المنطق الذي وضعناه في apply_move يرفض أي تجاوز جزئي غير مصرح به للخروج.
                     break
                     
         return possible_moves
     
     def apply_move(self, block_id, final_row_delta, final_col_delta):
-        """
-        [مُحدِّث الحالة] يطبق الحركة النهائية على اللوحة بعد التأكد من صلاحيتها.
-        المدخلات: مقدار التغير النهائي في الصفوف (final_row_delta) والأعمدة (final_col_delta).
-        """
+        
         if block_id not in self.BlockObjects:
             print(f"🛑 خطأ: لم يتم العثور على الكتلة بالمعرف {block_id}.")
             return False

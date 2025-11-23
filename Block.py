@@ -43,10 +43,7 @@ class Block:
         new_block = Block(block_data)
         return new_block
     def get_border_coords(self):
-        """
-        ترجع مجموعة (set) من الإحداثيات المطلقة للخلايا التي تلامس
-        الكتلة (الـ Block) ولكنها لا تنتمي إليها.
-        """
+        
         block_coords = set(self.get_absolute_coords())
         border_coords = set()
         
@@ -65,10 +62,7 @@ class Block:
         
         return final_border_coords
     def __repr__(self):
-        """
-        تُرجع تمثيلاً نصيًا واضحًا وموجزًا للكائن،
-        يتم استخدامه عند طباعة الكائن مباشرة.
-        """
+        
         return (f"Block(ID={self.id}, Color='{self.color}', "
                 f"Start=({self.start_row}, {self.start_col}), "
                 f"Shape={len(self.shape_coords)} cells)")

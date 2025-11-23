@@ -15,8 +15,8 @@ class GameGUI:
         "orange": "orange",
         "W": "brown",  
         0: "gray",
-        "darkblue": "midnightblue",  # يمكنك اختيار أي درجة من الأزرق الغامق
-        "purple": "mediumpurple",    # تم اختيار لون بنفسجي
+        "darkblue": "midnightblue",
+        "purple": "mediumpurple",    
         "cyan": "cyan",
         "blue":"blue"
 
@@ -56,7 +56,6 @@ class GameGUI:
         button.pack(side="left")
 
     def draw_Board(self):
-        """ترسم الشبكة والكتل والعوائق بناءً على حالة اللوحة الحالية."""
         self.canvas.delete("all")
         self.frame.delete("gate_drawings") 
         
@@ -83,6 +82,7 @@ class GameGUI:
                         'fill': fill_color,
                         'text': f"{gate_obj.required_color[0].upper()}/{gate_obj.required_length}"
                     }
+        #هون لتعبئة الرقعة بالبيانات
         for r in range(rows):
             for c in range(cols):
                 cell_content = self.Board.Grid[r][c]
@@ -140,7 +140,6 @@ class GameGUI:
    
     
     def cell_to_coords(self, r, c):
-        """تحويل إحداثيات الصف/العمود إلى إحداثيات بكسل على الـ canvas."""
         x = c * self.CELL_SIZE
         y = r * self.CELL_SIZE
         return x, y
@@ -188,16 +187,13 @@ class GameGUI:
         
         final_col_delta = round(delta_x_pixel / self.CELL_SIZE)
         final_row_delta = round(delta_y_pixel / self.CELL_SIZE)
-
+        #هي لحدود الحركة
         if abs(final_row_delta) > abs(final_col_delta):
-            # الحركة عمودية أقوى -> نلغي الأفقي
             final_col_delta = 0
         else:
-            # الحركة أفقية أقوى (أو متساوية) -> نلغي العمودي
             final_row_delta = 0
+        #هون استخدمنا التابع للحركة
         move_result = self.Board.make_move(block_id, final_row_delta, final_col_delta)
-
-        
         if move_result is not None:
             new_state, is_exit = move_result
             if new_state:
@@ -220,16 +216,13 @@ class GameGUI:
                     )
                     
             else:
-                print("🛑 فشلت الحركة: الحركة غير صالحة أو مغلقة. (الحالة لم تتغير)")
+                print("حركة غير مسموح بها")
 
             self.selected_block_id = None
             self.start_x = None
             self.start_y = None
 
     def finalize_exit(self, block_id, final_coords_on_grid):
-        """
-        تُنفذ هذه الدالة بعد مهلة زمنية لإزالة الكتلة نهائياً من اللوحة (Grid) وكتعريف (BlockObject).
-        """
         for r_abs, c_abs in final_coords_on_grid:
             if 0 <= r_abs < self.Board.rows and 0 <= c_abs < self.Board.cols:
                 if self.Board.Grid[r_abs][c_abs] == block_id:
@@ -238,7 +231,7 @@ class GameGUI:
         if block_id in self.Board.BlockObjects:
             del self.Board.BlockObjects[block_id]
             self.Board.decrement_moves_to_unlock() 
-            print(f"🎉 تم تأكيد خروج الكتلة {block_id}.")
+            print(f"🎉 تم تأكيد خروج الكتلة .")
             print("hello final")
 
         self.draw_Board()
