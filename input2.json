@@ -163,7 +163,7 @@
     ],
 
     "blocks": [
-        { "id": "|", "color": "green", "is_target": false, "start_row": 1, "start_col": 7, "shape_coords": [ [0, 0] ], "direction": "vertical", "moves_to_unlock": 3 },
+        { "id": "|", "color": "green", "is_target": false, "start_row": 1, "start_col": 7, "shape_coords": [ [0, 0] ], "direction": "vertical" },
         { "id": "Y1", "color": "yellow", "is_target": false, "start_row": 2, "start_col": 5, "shape_coords": [ [0, 0], [1, 0], [2, 0], [2, -1] ] },
         { "id": "---", "color": "yellow", "is_target": false, "start_row": 6, "start_col": 3, "shape_coords": [ [0, 0], [0, 1], [1, 0], [1, 1] ] ,"direction": "horizontal"},
         { "id": "R1", "color": "red", "is_target": false, "start_row": 3, "start_col": 1, "shape_coords": [ [0, 0], [1, 0], [2, 0], [1, 1] ] },

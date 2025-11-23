@@ -7,7 +7,7 @@ import time
 import datetime
 
 class GameGUI:
-    CELL_SIZE = 60 
+    CELL_SIZE = 50 
     COLORS = {
         "green": "lightgreen",
         "yellow": "yellow",
@@ -119,7 +119,6 @@ class GameGUI:
                             if remaining_moves > 0:
                                 text_to_draw  = str(remaining_moves)
                                 fill_color = "white"
-                                
                                 self.canvas.create_text(x1 + self.CELL_SIZE/2, y1 + self.CELL_SIZE/2, 
                                                         text=text_to_draw ,
                                                         fill="black", 
@@ -160,9 +159,9 @@ class GameGUI:
             if block_id != 0 and block_id != 'W'and block_id!='gate':
                 
                 block_to_exit = self.Board.BlockObjects[block_id]
-                nn= self.Board.check_gate_arround(block_id)
-                for n in nn :
-                    print(n)
+                # nn= self.Board.check_gate_arround(block_id)
+                # for n in nn :
+                #     print(n)
                 self.selected_block_id = block_id
                 self.start_x = event.x
                 self.start_y = event.y
@@ -191,14 +190,11 @@ class GameGUI:
         final_row_delta = round(delta_y_pixel / self.CELL_SIZE)
 
         if abs(final_row_delta) > abs(final_col_delta):
+            # الحركة عمودية أقوى -> نلغي الأفقي
             final_col_delta = 0
-        elif abs(final_col_delta) > abs(final_row_delta):
-            final_row_delta = 0
         else:
-            if abs(final_row_delta) == 0 and abs(final_col_delta) == 0:
-                self.selected_block_id = None
-                return
-        
+            # الحركة أفقية أقوى (أو متساوية) -> نلغي العمودي
+            final_row_delta = 0
         move_result = self.Board.make_move(block_id, final_row_delta, final_col_delta)
 
         
@@ -209,7 +205,7 @@ class GameGUI:
                 self.history_stack.append(self.Board.deep_copy())
                 self.Board = new_state
                 self.draw_Board()
-                # new_state.display_grid()
+                new_state.display_grid()
                 if is_exit:
                     print(True)
                     block_to_exit = self.Board.BlockObjects[block_id]
@@ -243,6 +239,7 @@ class GameGUI:
             del self.Board.BlockObjects[block_id]
             self.Board.decrement_moves_to_unlock() 
             print(f"🎉 تم تأكيد خروج الكتلة {block_id}.")
+            print("hello final")
 
         self.draw_Board()
         self.Board.display_grid() 

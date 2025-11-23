@@ -1,5 +1,5 @@
 {
-    "level_name": "Converted_Level",
+    "level_name": "New_Converted_Level_11x8",
     "board_settings": {
         "rows": 11,
         "cols": 8,
@@ -139,84 +139,138 @@
                 "is_wall": false,
                 "required_color": "cyan",
                 "required_length": 2
+            },
+            {
+                "id": "W1",
+                "side": "Top",
+                "contact_coords": [
+                    [
+                        0,
+                        0
+                    ]
+                ],
+                "is_wall": true,
+                "required_color": "black",
+                "required_length": 1
+            },
+            {
+                "id": "W2",
+                "side": "Top",
+                "contact_coords": [
+                    [
+                        0,
+                        7
+                    ]
+                ],
+                "is_wall": true,
+                "required_color": "black",
+                "required_length": 1
+            },
+            {
+                "id": "W3",
+                "side": "Left",
+                "contact_coords": [
+                    [
+                        3,
+                        0
+                    ],
+                    [
+                        4,
+                        0
+                    ],
+                    [
+                        5,
+                        0
+                    ],
+                    [
+                        6,
+                        0
+                    ],
+                    [
+                        7,
+                        0
+                    ]
+                ],
+                "is_wall": true,
+                "required_color": "black",
+                "required_length": 5
+            },
+            {
+                "id": "W4",
+                "side": "Bottom",
+                "contact_coords": [
+                    [
+                        10,
+                        0
+                    ],
+                    [
+                        10,
+                        1
+                    ],
+                    [
+                        10,
+                        2
+                    ]
+                ],
+                "is_wall": true,
+                "required_color": "black",
+                "required_length": 3
+            },
+            {
+                "id": "W5",
+                "side": "Bottom",
+                "contact_coords": [
+                    [
+                        10,
+                        5
+                    ],
+                    [
+                        10,
+                        6
+                    ],
+                    [
+                        10,
+                        7
+                    ]
+                ],
+                "is_wall": true,
+                "required_color": "black",
+                "required_length": 3
+            },
+            {
+                "id": "W6",
+                "side": "Right",
+                "contact_coords": [
+                    [
+                        3,
+                        7
+                    ],
+                    [
+                        4,
+                        7
+                    ],
+                    [
+                        5,
+                        7
+                    ],
+                    [
+                        6,
+                        7
+                    ],
+                    [
+                        7,
+                        7
+                    ]
+                ],
+                "is_wall": true,
+                "required_color": "black",
+                "required_length": 5
             }
         ]
     },
     "static_elements": [
         {
             "occupying_coords": [
-                [
-                    0,
-                    0
-                ],
-                [
-                    3,
-                    0
-                ],
-                [
-                    4,
-                    0
-                ],
-                [
-                    5,
-                    0
-                ],
-                [
-                    6,
-                    0
-                ],
-                [
-                    7,
-                    0
-                ],
-                [
-                    10,
-                    0
-                ],
-                [
-                    10,
-                    1
-                ],
-                [
-                    10,
-                    2
-                ],
-                [
-                    10,
-                    5
-                ],
-                [
-                    10,
-                    6
-                ],
-                [
-                    10,
-                    7
-                ],
-                [
-                    7,
-                    7
-                ],
-                [
-                    6,
-                    7
-                ],
-                [
-                    5,
-                    7
-                ],
-                [
-                    4,
-                    7
-                ],
-                [
-                    3,
-                    7
-                ],
-                [
-                    0,
-                    7
-                ],
                 [
                     3,
                     3
@@ -391,8 +445,7 @@
                     1,
                     0
                 ]
-            ],
-             "moves_to_unlock": 3
+            ]
         },
         {
             "id": "B8",
@@ -413,8 +466,7 @@
                     0,
                     1
                 ]
-            ],
-             "moves_to_unlock": 2
+            ]
         },
         {
             "id": "B9",

@@ -74,7 +74,7 @@ class Board:
             for c in range(self.cols):
                 content = self.Grid[r][c]
                 if content == 0:
-                    row_str += "  | "
+                    row_str += "0| "
                 elif content == 'W':
                     row_str += "W | "
                 elif content == 'E':
@@ -203,11 +203,13 @@ class Board:
         new_start_row = old_block.start_row + row_delta
         new_start_col = old_block.start_col + col_delta
         new_coords = self.calculate_coords(old_block, new_start_row, new_start_col)
-        if old_block.direction == 'horizontal' and row_delta != 0:
+        print(col_delta,row_delta)
+        if old_block.direction == 'horizontal' and col_delta == 0 and row_delta!=0:
             print(f"🛑 الحركة لـ {block_id} غير صالحة. الاتجاه مقيد أفقياً (Horizontal).")
+            print(col_delta)
             return None
             
-        if old_block.direction == 'vertical' and col_delta != 0:
+        if old_block.direction == 'vertical' and col_delta != 0 and row_delta==0:
             print(f"🛑 الحركة لـ {block_id} غير صالحة. الاتجاه مقيد عمودياً (Vertical).")
             return None
         
