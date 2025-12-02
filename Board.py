@@ -1,3 +1,5 @@
+from itertools import count
+from numpy import block
 from Block import Block
 from ExitGate import ExitGate
 import copy
@@ -12,7 +14,6 @@ class Board:
         self.BlockObjects = {} 
         self.StaticElements = set() 
         self.ExitGates = {} 
-        self.moves_to_unlock = 0
         self.initialize_board(data_map)
 
     def deep_copy(self):
@@ -46,7 +47,7 @@ class Board:
 
         #يقوم بتوزيع المعبات في الرقعة 
         for block_data in data['blocks']:
-            block = Block(block_data)
+            block = Block(block_data,settings['rows'],settings['cols'])
             self.BlockObjects[block.id] = block
 
             for r_abs, c_abs in block.get_absolute_coords():
@@ -73,7 +74,7 @@ class Board:
             for c in range(self.cols):
                 content = self.Grid[r][c]
                 if content == 0:
-                    row_str += "0| "
+                    row_str += "0 | "
                 elif content == 'W':
                     row_str += "W | "
                 elif content == 'E':
@@ -174,7 +175,7 @@ class Board:
 
     def is_valid_position(self,block_id,new_coords):
         rows, cols = self.rows, self.cols
-
+        # print("cooooo",new_coords,"cooooo")
         for r_abs, c_abs in new_coords:
             if r_abs < 0 or r_abs >= rows or c_abs < 0 or c_abs >= cols:
                 return False
@@ -195,7 +196,7 @@ class Board:
                 print(f"📉 تم تحديث قفل الكتلة {block_id}. القيمة الجديدة: {block.moves_to_unlock}")
 
     def make_move(self, block_id, row_delta, col_delta):
-
+        
         if block_id not in self.BlockObjects:
             return None
         
@@ -203,13 +204,13 @@ class Board:
         new_start_row = old_block.start_row + row_delta
         new_start_col = old_block.start_col + col_delta
         new_coords = self.calculate_coords(old_block, new_start_row, new_start_col)
-        print(col_delta,row_delta)
-        if old_block.direction == 'horizontal' and col_delta == 0 and row_delta!=0:
+        # print(col_delta,row_delta)
+        if old_block.direction == 'horizontal' and col_delta == 0 :
             print(f"🛑 الحركة لـ {block_id} غير صالحة. الاتجاه مقيد أفقياً (Horizontal).")
             print(col_delta)
             return None
             
-        if old_block.direction == 'vertical' and col_delta != 0 and row_delta==0:
+        if old_block.direction == 'vertical' and  row_delta==0:
             print(f"🛑 الحركة لـ {block_id} غير صالحة. الاتجاه مقيد عمودياً (Vertical).")
             return None
         
@@ -239,26 +240,102 @@ class Board:
             for r_abs, c_abs in new_coords:
                 if 0 <= r_abs < new_board.rows and 0 <= c_abs < new_board.cols:
                     new_board.Grid[r_abs][c_abs] = block_id 
-                
+            new_board.get_possible_moves_for_one_block(block_id)
             return new_board,True
         else:
             for r_abs, c_abs in new_coords:
                 if 0 <= r_abs < new_board.rows and 0 <= c_abs < new_board.cols:
                     new_board.Grid[r_abs][c_abs] = block_id 
-                
+            new_board.get_possible_moves_for_one_block(block_id)
             return new_board,False
     
     def is_final_state(self):
         return len(self.BlockObjects) == 0
         
-    
+    def is_cell_valid(self,r_abs, c_abs):
+        if not (0 <= r_abs < self.rows and 0 <= c_abs < self.cols):
+            return False
+            
+        cell_content = self.Grid[r_abs][c_abs]
+        if cell_content!=0:
+            return False 
+        return True
     
 
+    def count_valid_moves(self,block_id,border_coords):
+        block=self.BlockObjects[block_id]
+        top_count, bottom_count, left_count, right_count = 0, 0, 0, 0
+        is_top_clear, is_bottom_clear, is_left_clear, is_right_clear = True, True, True, True
+        if block.moves_to_unlock > 0:
+            top_count, bottom_count,left_count,right_count=0,0,0,0
+            return 0
+        else:
+            top_coords_set = border_coords.get("Top", set())
+            bottom_coords_set = border_coords.get("bottom", set())
+            left_coords_set = border_coords.get("left", set())
+            right_coords_set = border_coords.get("right", set())
+            if block.direction in ['vertical', 'both']:
+                for r_abs, c_abs in top_coords_set:
+                    is_cell_valid=self.is_cell_valid(r_abs,c_abs)
+                    if not is_cell_valid:
+                        is_top_clear = False
+                if is_top_clear:
+                    top_count=1
+                print(block.id ,"can move top ",top_count)
+                for r_abs, c_abs in bottom_coords_set:
+                    is_cell_valid=self.is_cell_valid(r_abs,c_abs)
+                    if not is_cell_valid:
+                        is_bottom_clear = False
+                if is_bottom_clear:
+                    bottom_count=1
+                print(block.id ,"can move bottom ",bottom_count)
+            if block.direction in ['horizontal', 'both']:
+                for r_abs, c_abs in left_coords_set:
+                    is_cell_valid=self.is_cell_valid(r_abs,c_abs)
+                    if not is_cell_valid:
+                        is_left_clear = False
+                if is_left_clear:
+                    left_count=1
+                print(block.id ,"can move left ",left_count)
+                for r_abs, c_abs in right_coords_set:
+                    is_cell_valid=self.is_cell_valid(r_abs,c_abs)
+                    if not is_cell_valid:
+                        is_right_clear = False
+                if is_right_clear:
+                    right_count=1
+                print(block.id ,"can move right ",right_count)
+        
+        count_moves=top_count+ bottom_count+left_count+right_count
+        print(f"possible moves for {block.id} is {count_moves}")
+        return count_moves
+
+    def get_possible_moves_for_one_block(self, block_id):
+        
+        if block_id not in self.BlockObjects:
+            return {}
+        block = self.BlockObjects[block_id]
+        
+        absolute_coords= block.get_absolute_coords()
+        border_coords= block.get_directional_border_coords()
+        # print("get_absolute_coords",absolute_coords)
+        # print("get_border_coords",border_coords)
+        count_moves=self.count_valid_moves(block_id,border_coords)
+        return count_moves
+    
+    def get_possible_moves_for_board(self):
+        count_possible_moves =0
+        for block_id in self.BlockObjects:
+            count_moves=self.get_possible_moves_for_one_block(block_id)
+            count_possible_moves+=count_moves
+        
+        print("------------\n","count possible moves for all board ",count_possible_moves)
+
+
+    
 
     # توابع قديمة؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟؟
     #لاااااا اريدها الان عملتا بس ما استخدمتا
     #-------------------------------------------------------------------------
-
     def get_possible_moves(self, block_id):
         """
         يحدد جميع الحركات الصالحة الممكنة لكتلة معينة.
@@ -395,5 +472,4 @@ class Board:
                 return True
        
         return False    
-    
     

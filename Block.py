@@ -1,5 +1,5 @@
 class Block:
-    def __init__(self, block_data):
+    def __init__(self, block_data,rows,cols):
         self.id = block_data['id']
         self.color = block_data['color']
         self.start_row = block_data['start_row']
@@ -7,6 +7,8 @@ class Block:
         self.shape_coords = [tuple(c) for c in block_data['shape_coords']]
         self.direction = block_data.get('direction', 'both')
         self.moves_to_unlock = block_data.get('moves_to_unlock', 0)
+        self.rows=rows
+        self.cols=cols
     
     def get_absolute_coords(self):
         absolute_coords = []
@@ -61,6 +63,34 @@ class Block:
         final_border_coords = border_coords - block_coords
         
         return final_border_coords
+    def get_directional_border_coords(self):
+        block_coords = set(self.get_absolute_coords())
+        
+        direction_deltas = {
+            'Top': (-1, 0),  # إنقاص الصف (للأعلى)
+            'bottom': (1, 0),   # زيادة الصف (للأسفل)
+            'left': (0, -1),  # إنقاص العمود (لليسار)
+            'right': (0, 1)   # زيادة العمود (لليمين)
+        }
+        
+        # 3. تهيئة الديكشنري للنتائج
+        directional_border_coords = {dir_name: set() for dir_name in direction_deltas}
+        
+        # 4. المرور على كل خلية من خلايا الكتلة
+        for r_abs, c_abs in block_coords:
+            
+            # 5. اختبار كل اتجاه من الاتجاهات الأربعة
+            for direction, (dr, dc) in direction_deltas.items():
+                
+                # حساب إحداثيات الخلية المجاورة
+                r_neighbor = r_abs + dr
+                c_neighbor = c_abs + dc
+                neighbor_coord = (r_neighbor, c_neighbor)
+                
+                if neighbor_coord not in block_coords:
+                    directional_border_coords[direction].add(neighbor_coord)
+                    
+        return directional_border_coords
     def __repr__(self):
         
         return (f"Block(ID={self.id}, Color='{self.color}', "
