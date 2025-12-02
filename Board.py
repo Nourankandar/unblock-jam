@@ -240,13 +240,13 @@ class Board:
             for r_abs, c_abs in new_coords:
                 if 0 <= r_abs < new_board.rows and 0 <= c_abs < new_board.cols:
                     new_board.Grid[r_abs][c_abs] = block_id 
-            new_board.get_possible_moves_for_one_block(block_id)
+            # new_board.get_possible_moves_for_one_block(block_id)
             return new_board,True
         else:
             for r_abs, c_abs in new_coords:
                 if 0 <= r_abs < new_board.rows and 0 <= c_abs < new_board.cols:
                     new_board.Grid[r_abs][c_abs] = block_id 
-            new_board.get_possible_moves_for_one_block(block_id)
+            # new_board.get_possible_moves_for_one_block(block_id)
             return new_board,False
     
     def is_final_state(self):

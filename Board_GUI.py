@@ -48,7 +48,7 @@ class GameGUI:
         self.canvas.bind("<ButtonRelease-1>", self.on_release)
         self.add_button(self.frame,"Undo",self.handle_undo)
         self.add_button(self.frame,"Reset",self.handle_reset)
-        self.add_button(self.frame,"get moves",self.Board.get_possible_moves_for_board)
+        self.add_button(self.frame,"get moves",self.handle_get_moves_button)
         self.draw_Board()
 
     def add_button(self,frame,text,command):
@@ -147,6 +147,10 @@ class GameGUI:
     #_____________________________________________________________________________
     #الحركة 
     # ملف: Board_GUI.py (دالة جديدة)
+    def handle_get_moves_button(self):
+    
+        self.Board.get_possible_moves_for_board()        
+        print("--------------------------------------------------")
 
     def on_click(self, event):
         col = (event.x ) // self.CELL_SIZE
@@ -195,7 +199,6 @@ class GameGUI:
             final_row_delta = 0
         #هون استخدمنا التابع للحركة
         move_result = self.Board.make_move(block_id, final_row_delta, final_col_delta)
-        # self.Board.get_possible_moves_for_one_block(block_id)
         if move_result is not None:
             new_state, is_exit = move_result
             if new_state:
@@ -204,6 +207,7 @@ class GameGUI:
                 self.Board = new_state
                 self.draw_Board()
                 new_state.display_grid()
+                # self.Board.get_possible_moves_for_board()
                 if is_exit:
                     print(True)
                     block_to_exit = self.Board.BlockObjects[block_id]
