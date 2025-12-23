@@ -1,0 +1,131 @@
+{
+    "level_name": "Simple_BFS_Test_6x6_All_Exits",
+    "board_settings": {
+        "rows": 8,
+        "cols": 8,
+        "exit_gates": [
+            {
+                "id": "E1_B1",
+                "side": "Right",
+                "contact_coords": [
+                    [ 2, 7 ]
+                ],
+                "required_color": "red",
+                "required_length": 2
+            },
+            {
+                "id": "E2_B2",
+                "side": "Bottom",
+                "contact_coords": [
+                    [ 7, 3 ]
+                ],
+                "required_color": "green",
+                "required_length": 2
+            },
+            {
+                "id": "E3_B3",
+                "side": "Left",
+                "contact_coords": [
+                    [ 4, 0 ]
+                ],
+                "required_color": "blue",
+                "required_length": 1
+            },
+             {
+                "id": "E4",
+                "side": "Bottom",
+                "contact_coords": [
+                    [
+                        7,
+                        1
+                    ],
+                    [
+                        7,
+                        2
+                    ]
+                ],
+                "required_color": "orange",
+                "required_length": 2
+            }
+        ]
+    },
+    "static_elements": [
+        {
+            "occupying_coords": [
+                [0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5],[0, 6],[0, 7],
+                [7, 0], [7, 4], [7, 5],[7, 6],[7, 7],
+                
+                [1, 7], [3, 7], [4, 7], [5, 7], [6, 7],
+                [1, 0], [2, 0], [3, 0], [5, 0], [6, 0]
+                
+                
+
+
+                
+            ]
+        }
+    ],
+    "blocks": [
+        {
+            "id": "B1",
+            "color": "red",
+            "is_target": true, 
+            "start_row": 3,
+            "start_col": 1,
+            "shape_coords": [ [0, 0], [0, 1] ]
+        },
+        {
+            "id": "B2",
+            "color": "green",
+            "is_target": true, 
+            "start_row": 1,
+            "start_col": 3,
+            "shape_coords": [ [0, 0], [1, 0] ] 
+        },
+        {
+            "id": "B3",
+            "color": "blue",
+            "is_target": true, 
+            "start_row": 4,
+            "start_col": 3,
+            "shape_coords": [ [0, 0] ]
+        },
+        {
+            "id": "B4",
+            "color": "blue",
+            "is_target": true, 
+            "start_row": 5,
+            "start_col": 3,
+            "shape_coords": [ [0, 0] ]
+        },
+        {
+            "id": "B5",
+            "color": "green",
+            "is_target": true, 
+            "start_row": 1,
+            "start_col": 4,
+            "shape_coords": [ [0, 0], [1, 0] ] 
+        },
+        {
+            "id": "B6",
+            "color": "orange",
+            "is_target": false,
+            "start_row": 1,
+            "start_col": 1,
+            "shape_coords": [
+                [
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1
+                ],
+                [
+                    1,
+                    0
+                ]
+            ]
+        }
+    ]
+}

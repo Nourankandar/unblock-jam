@@ -9,6 +9,7 @@ class Block:
         self.moves_to_unlock = block_data.get('moves_to_unlock', 0)
         self.rows=rows
         self.cols=cols
+        self.cost = self.calculate_cost_by_size()
     
     def get_absolute_coords(self):
         absolute_coords = []
@@ -31,6 +32,9 @@ class Block:
         cols_span = c_rel_max - c_rel_min + 1
         
         return (rows_span, cols_span)
+    def calculate_cost_by_size(self):
+        self.cost = len(self.shape_coords)
+        return self.cost
     
     def copy(self):
         block_data = {
@@ -63,6 +67,29 @@ class Block:
         final_border_coords = border_coords - block_coords
         
         return final_border_coords
+    
+
+
+    def get_max_dimensions(self):
+        if not self.shape_coords:
+            return 0, 0
+            
+        rows = [r for r, c in self.shape_coords]
+        cols = [c for r, c in self.shape_coords]
+        
+        width = max(cols) - min(cols) + 1
+        height = max(rows) - min(rows) + 1
+        return height, width
+    
+    def get_block_span(self, gate_side):
+        if gate_side in ["Left", "Right"]:
+            rows = [r for r, c in self.shape_coords]
+            return max(rows) - min(rows) + 1
+        else:
+            cols = [c for r, c in self.shape_coords]
+            return max(cols) - min(cols) + 1
+        
+    #----------------------------------------------------
     def get_directional_border_coords(self):
         block_coords = set(self.get_absolute_coords())
         

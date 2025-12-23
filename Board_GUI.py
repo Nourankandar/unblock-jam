@@ -1,11 +1,10 @@
-from cProfile import label
 import tkinter as tk
 from tkinter import *
 from Board import Board 
 from tkinter import messagebox
 import time
 import datetime
-
+from algorithms import BFS_solver, UCS_solver,dfs_solver, hill_climbing_solver,recursive_dfs_solver,hill_climbing_beam_solver
 class GameGUI:
     CELL_SIZE = 50 
     COLORS = {
@@ -49,6 +48,11 @@ class GameGUI:
         self.add_button(self.frame,"Undo",self.handle_undo)
         self.add_button(self.frame,"Reset",self.handle_reset)
         self.add_button(self.frame,"get moves",self.handle_get_moves_button)
+        self.add_button(self.frame,"Bfs",self.handle_get_moves_button11)
+        self.add_button(self.frame,"Dfs",self.handle_get_moves_button12)
+        self.add_button(self.frame,"Dfs R",self.handle_get_moves_button13)
+        self.add_button(self.frame,"UCS",self.handle_get_moves_button14)
+        self.add_button(self.frame,"Hill Climbing",self.handle_get_moves_button15)
         self.draw_Board()
 
     def add_button(self,frame,text,command):
@@ -148,8 +152,8 @@ class GameGUI:
     #الحركة 
     # ملف: Board_GUI.py (دالة جديدة)
     def handle_get_moves_button(self):
-    
-        self.Board.get_possible_moves_for_board()        
+        count_possible_moves,all_child_boards=self.Board.get_possible_moves_for_board()     
+        print(all_child_boards)   
         print("--------------------------------------------------")
 
     def on_click(self, event):
@@ -227,6 +231,7 @@ class GameGUI:
             self.selected_block_id = None
             self.start_x = None
             self.start_y = None
+    
 
     def finalize_exit(self, block_id, final_coords_on_grid):
         for r_abs, c_abs in final_coords_on_grid:
@@ -237,15 +242,15 @@ class GameGUI:
         if block_id in self.Board.BlockObjects:
             del self.Board.BlockObjects[block_id]
             self.Board.decrement_moves_to_unlock() 
-            print(f"🎉 تم تأكيد خروج الكتلة .")
-            print("hello final")
+            print(f"out  .")
+            # print("hello final")
 
         self.draw_Board()
         self.Board.display_grid() 
 
         if self.Board.is_final_state():
                 messagebox.showinfo("تهانينا!", "🎉 تم حل اللغز بنجاح وإفراغ الرقعة!")
-                print("تهانينا! 🎉 تم حل اللغز وإفراغ الرقعة.")
+                print("تهانينا  تم حل اللغز وإفراغ الرقعة.")
                 self.handle_reset()
         
 
@@ -263,3 +268,120 @@ class GameGUI:
         self.history_stack = []
         self.draw_Board()
         print("🔄 تمت إعادة ضبط اللعبة إلى الحالة البدائية.")
+
+    
+    def handle_get_moves_button11(self):
+        initial_board_copy = self.Board.deep_copy() 
+        solution_data = BFS_solver(initial_board_copy,500)
+        solution_path, execution_time = solution_data
+        time_str = f"{execution_time:.4f} ثانية"
+        if solution_path:
+            num_moves = len(solution_path)
+            messagebox.showinfo(
+                "تم العثور على حل!", 
+                f"الحل يتطلب {num_moves} خطوة.\nوقت التنفيذ: {time_str}"
+            )
+            self.print_game_moves(solution_path)
+            self.solution_path = solution_path
+            
+        else:
+            messagebox.showerror(
+                "لا يوجد حل", 
+                f"لم تتمكن الخوارزمية من العثور على حل.\nوقت التنفيذ: {time_str}"
+            )
+
+    def handle_get_moves_button12(self):
+        initial_board_copy = self.Board.deep_copy() 
+        solution_data = dfs_solver(initial_board_copy)
+        solution_path, execution_time = solution_data
+        time_str = f"{execution_time:.4f} ثانية"
+
+        if solution_path:
+            num_moves = len(solution_path)
+            messagebox.showinfo(
+            "Solution Found!", 
+            f"The solution requires {num_moves} moves.\nExecution Time: {time_str}")
+            self.solution_path = solution_path
+            self.print_game_moves(solution_path)
+        else:
+            messagebox.showerror(
+                "No Solution", 
+                f"The algorithm failed to find a solution.\nExecution Time: {time_str}"
+            )
+    
+    def handle_get_moves_button13(self):
+        initial_board_copy = self.Board.deep_copy() 
+        solution_data = recursive_dfs_solver(initial_board_copy)
+        solution_path, execution_time = solution_data
+        time_str = f"{execution_time:.4f} ثانية"
+
+        if solution_path:
+            num_moves = len(solution_path)
+            messagebox.showinfo(
+            "Solution Found!", 
+            f"The solution requires {num_moves} moves.\nExecution Time: {time_str}")
+            self.solution_path = solution_path
+            self.print_game_moves(solution_path)
+        else:
+            messagebox.showerror(
+                "No Solution", 
+                f"The algorithm failed to find a solution.\nExecution Time: {time_str}"
+            )
+    def handle_get_moves_button14(self):
+        initial_board_copy = self.Board.deep_copy() 
+        solution_data = UCS_solver(initial_board_copy)
+        solution_path, execution_time = solution_data
+        time_str = f"{execution_time:.4f} ثانية"
+
+        if solution_path:
+            num_moves = len(solution_path)
+            messagebox.showinfo(
+            "Solution Found!", 
+            f"The solution requires {num_moves} moves.\nExecution Time: {time_str}")
+            self.solution_path = solution_path
+            self.print_game_moves(solution_path)
+        else:
+            messagebox.showerror(
+                "No Solution", 
+                f"The algorithm failed to find a solution.\nExecution Time: {time_str}"
+            )
+    
+    def handle_get_moves_button15(self):
+        initial_board_copy = self.Board.deep_copy() 
+        solution_data = hill_climbing_beam_solver(initial_board_copy)
+        solution_path, execution_time = solution_data
+        time_str = f"{execution_time:.4f} ثانية"
+
+        if solution_path:
+            num_moves = len(solution_path)
+            messagebox.showinfo(
+            "Solution Found!", 
+            f"The solution requires {num_moves} moves.\nExecution Time: {time_str}")
+            self.solution_path = solution_path
+            self.print_game_moves(solution_path)
+        else:
+            messagebox.showerror(
+                "No Solution", 
+                f"The algorithm failed to find a solution.\nExecution Time: {time_str}"
+            )
+    def print_game_moves(self,moves_list):
+    
+        directions = {
+            (-1, 0): "Top ⬆️",
+            (1, 0):  "Bottom ⬇️",
+            (0, -1): "Left ⬅️",
+            (0, 1):  "Right ➡️"
+        }
+
+        print(f"Moves {len(moves_list)}) ---")
+        
+        for i, move in enumerate(moves_list, 1):
+            if not move or len(move) < 3:
+                continue
+                
+            block_name = move[0]      # اسم المكعب مثل B7
+            offset = (move[1], move[2]) # الإزاحة (صف، عمود)
+            
+            direction_text = directions.get(offset, f" moved {offset}")
+            
+            print(f"step {i}: block {block_name} moved  {direction_text}")

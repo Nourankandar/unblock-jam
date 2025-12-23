@@ -6,7 +6,7 @@ import tkinter as tk
 def load_data(file_path):
 
     if not os.path.exists(file_path):
-        print(f"🛑 خطأ: لم يتم العثور على الملف في المسار المحدد: {file_path}")
+        print(f" خطأ: لم يتم العثور على الملف في المسار المحدد: {file_path}")
         return None
     
     try:
@@ -16,10 +16,10 @@ def load_data(file_path):
         return data_map
 
     except json.JSONDecodeError as e:
-        print(f"❌ خطأ في فك ترميز ملف JSON (تأكد من سلامة التنسيق): {e}")
+        print(f" خطأ في فك ترميز ملف JSON (تأكد من سلامة التنسيق): {e}")
         return None
     except Exception as e:
-        print(f"🚫 حدث خطأ غير متوقع أثناء القراءة: {e}")
+        print(f" حدث خطأ غير متوقع أثناء القراءة: {e}")
         return None
 
 file_path="output_input2.json"
@@ -33,4 +33,4 @@ if data is not None:
     root.mainloop()
     
 else:
-    print("❌ فشل تحميل البيانات، لن يتم بناء اللوحة.")
+    print(" فشل تحميل البيانات، لن يتم بناء اللوحة.")
