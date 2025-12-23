@@ -3,6 +3,8 @@ import time
 import copy
 from Board import Board 
 from collections import deque
+import heapq
+
 def reconstruct_path(parent_map, start_key, end_key):
     path = []
     current_key = end_key
@@ -165,71 +167,9 @@ def BFS_solver(initial_board,max_iterations):
     if not queue:
         print("no solutions")
     return None, execution_time
-from collections import deque
-import time
-import heapq
 
-def UCS_solver(initial_board):
-    start_time = time.time()
-    if initial_board.is_final_state():
-        return [], 0
-    start_key = initial_board.get_hashable_key()
-    visited = {start_key: 0} 
-    priority_queue = []
-    counter = 0 
-    heapq.heappush(priority_queue, (0, counter, initial_board, start_key))
-    parent_map = {}
-    states_count = 0
-    while priority_queue:
-        curr_cost, _, curr_board, curr_key = heapq.heappop(priority_queue)
-        if curr_board.is_final_state(): 
-            execution_time = time.time() - start_time
-            path = reconstruct_path(parent_map, start_key, curr_key) 
-            return path, execution_time
-        states_count += 1
-        if states_count % 1000 == 0:
-            print(f"Iterations: {states_count} | Queue Size: {len(priority_queue)} | Cost: {curr_cost}")
-
-        _, all_child_moves = curr_board.get_possible_moves_for_board()
-        # print(all_child_moves)
-        for child_board, move_details in all_child_moves:
-            child_key = child_board.get_hashable_key()
-            # print(child_key)
-            block_id = move_details[0]
-            direction_bonus = 0
-            block_id, row_off, col_off = move_details
-            moved_block = curr_board.BlockObjects[block_id]
-            
-            move_cost = moved_block.cost
-            if moved_block.orientation == 'horizontal': 
-                if (col_off > 0 and moved_block.col > child_board.cols / 2) or \
-                (col_off < 0 and moved_block.col <= child_board.cols / 2):
-                    direction_bonus = 2 
-
-            elif moved_block.orientation == 'vertical':
-                if (row_off > 0 and moved_block.row > child_board.rows / 2) or \
-                (row_off < 0 and moved_block.row <= child_board.rows / 2):
-                    direction_bonus = 2 
-
-            exit_bonus = 100 if len(child_board.BlockObjects) < len(curr_board.BlockObjects) else 0
-            
-            new_total_cost = max(0, curr_cost + move_cost - direction_bonus - exit_bonus)
-            move_cost = curr_board.BlockObjects[block_id].cost
-            bonus = 0
-            if len(child_board.BlockObjects) < len(curr_board.BlockObjects):
-                bonus = 50 
-            new_total_cost = max(0, curr_cost + move_cost - bonus)
-            
-            if child_key not in visited or new_total_cost < visited[child_key]:
-                visited[child_key] = new_total_cost
-                parent_map[child_key] = (curr_key, move_details)
-                counter += 1
-                heapq.heappush(priority_queue, (new_total_cost, counter, child_board, child_key))
-                
-    return None, time.time() - start_time
-
-
-#هاد التابع بركز ع اقل تكلفة بالمسار 
+#-------------------------------------------------
+ #هاد التابع بركز ع اقل تكلفة بالمسار 
 # التكلفة هي طبيعة الكتلة و اتجاه حركتها
 #التكلفة بتقل لما بتقرب عالاطراف وبتقل اكتر وقت تخرج كتلة برا الرقعة 
 #وكمان حسب الكتلة كيف مكونة وتكلفتها 
@@ -284,8 +224,7 @@ def UCS_solver(initial_board):
                 heapq.heappush(priority_queue, (new_total_cost, counter, child_board, child_key))
                 
     return None, time.time() - start_time
-
-import time
+#------------------------------------------------------
 # هون اهم شي  المسافة والقرب من البوابات
 def hill_climbing_solver(initial_board):
     start_time = time.time()
@@ -356,11 +295,8 @@ def calculate_board_heuristic(board):
             else:
                 h += 50
     return h
-
-
-import time
-import heapq
 #محسن **************
+#------------------------------------------------------------
 def hill_climbing_beam_solver(initial_board, beam_width=3):
     start_time = time.time()
     current_states = [(calculate_board_heuristic(initial_board), initial_board, [])]
@@ -403,3 +339,55 @@ def hill_climbing_beam_solver(initial_board, beam_width=3):
 
     return None, time.time() - start_time
 
+
+# -------------------------------------------------------------
+def a_star_solver(initial_board):
+    start_time = time.time()
+    start_key = initial_board.get_hashable_key()
+    actual_steps_taken_so_far = {start_key: 0} #هذي التكلفة
+    h_score = calculate_board_heuristic(initial_board) #هذه تكلفة تقديرية
+    f_score = 0 + h_score #وهي الواقعية
+    priority_queue = []
+    counter = 0
+    heapq.heappush(priority_queue, (f_score, counter, initial_board, 0))
+    
+    parent_map = {}
+    states_explored_count = 0
+    while priority_queue:
+        (total_expected_cost, 
+         _, 
+         current_board, 
+         actual_steps_from_start) = heapq.heappop(priority_queue)
+        
+        current_state_key = current_board.get_hashable_key()
+
+        if current_board.is_final_state():
+            execution_time = time.time() - start_time
+            solution_path = reconstruct_path(parent_map, start_key, current_state_key)
+            return solution_path, execution_time
+
+        states_explored_count += 1
+        if states_explored_count % 1000 == 0:
+            print(f"Explored: {states_explored_count} | Queue: {len(priority_queue)} | Current Total Cost: {total_expected_cost}")
+
+        _, all_possible_moves = current_board.get_possible_moves_for_board()
+        
+        for child_board, move_details in all_possible_moves:
+            child_state_key = child_board.get_hashable_key()
+            new_actual_steps = actual_steps_from_start + 1
+            if child_state_key not in actual_steps_taken_so_far or new_actual_steps < actual_steps_taken_so_far[child_state_key]:
+                
+                actual_steps_taken_so_far[child_state_key] = new_actual_steps
+                parent_map[child_state_key] = (current_state_key, move_details)
+                
+                estimated_remaining = calculate_board_heuristic(child_board)
+                
+                total_path_cost_estimate = new_actual_steps + estimated_remaining
+                
+                counter += 1
+                heapq.heappush(priority_queue, (total_path_cost_estimate, 
+                                               counter, 
+                                               child_board, 
+                                               new_actual_steps))
+                                               
+    return None, time.time() - start_time

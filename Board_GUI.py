@@ -4,7 +4,7 @@ from Board import Board
 from tkinter import messagebox
 import time
 import datetime
-from algorithms import BFS_solver, UCS_solver,dfs_solver, hill_climbing_solver,recursive_dfs_solver,hill_climbing_beam_solver
+from algorithms import BFS_solver, UCS_solver, a_star_solver,dfs_solver, hill_climbing_solver,recursive_dfs_solver,hill_climbing_beam_solver
 class GameGUI:
     CELL_SIZE = 50 
     COLORS = {
@@ -53,6 +53,7 @@ class GameGUI:
         self.add_button(self.frame,"Dfs R",self.handle_get_moves_button13)
         self.add_button(self.frame,"UCS",self.handle_get_moves_button14)
         self.add_button(self.frame,"Hill Climbing",self.handle_get_moves_button15)
+        self.add_button(self.frame,"A Star",self.handle_get_moves_button16)
         self.draw_Board()
 
     def add_button(self,frame,text,command):
@@ -349,6 +350,24 @@ class GameGUI:
     def handle_get_moves_button15(self):
         initial_board_copy = self.Board.deep_copy() 
         solution_data = hill_climbing_beam_solver(initial_board_copy)
+        solution_path, execution_time = solution_data
+        time_str = f"{execution_time:.4f} ثانية"
+
+        if solution_path:
+            num_moves = len(solution_path)
+            messagebox.showinfo(
+            "Solution Found!", 
+            f"The solution requires {num_moves} moves.\nExecution Time: {time_str}")
+            self.solution_path = solution_path
+            self.print_game_moves(solution_path)
+        else:
+            messagebox.showerror(
+                "No Solution", 
+                f"The algorithm failed to find a solution.\nExecution Time: {time_str}"
+            )
+    def handle_get_moves_button16(self):
+        initial_board_copy = self.Board.deep_copy() 
+        solution_data = a_star_solver(initial_board_copy)
         solution_path, execution_time = solution_data
         time_str = f"{execution_time:.4f} ثانية"
 
