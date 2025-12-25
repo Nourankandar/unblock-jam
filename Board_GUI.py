@@ -270,119 +270,152 @@ class GameGUI:
         self.draw_Board()
         print("🔄 تمت إعادة ضبط اللعبة إلى الحالة البدائية.")
 
-    
     def handle_get_moves_button11(self):
         initial_board_copy = self.Board.deep_copy() 
-        solution_data = BFS_solver(initial_board_copy,500)
-        solution_path, execution_time = solution_data
+        result = BFS_solver(initial_board_copy, 500)
+        
+        solution_path = result["path"]
+        execution_time = result["time"]
+        memory_used = result["memory"]
+        states_explored = result["explored_states"]
+        
         time_str = f"{execution_time:.4f} ثانية"
-        if solution_path:
+        if solution_path is not None:
             num_moves = len(solution_path)
             messagebox.showinfo(
-                "تم العثور على حل!", 
-                f"الحل يتطلب {num_moves} خطوة.\nوقت التنفيذ: {time_str}"
+                "تم العثور على حل (BFS)!", 
+                f"عدد الحركات: {num_moves} خطوة.\n"
+                f"وقت التنفيذ: {time_str}\n"
+                f"الحالات المخزنة: {memory_used}\n"
+                f"الحالات المستكشفة: {states_explored}"
             )
             self.print_game_moves(solution_path)
             self.solution_path = solution_path
-            
         else:
             messagebox.showerror(
                 "لا يوجد حل", 
-                f"لم تتمكن الخوارزمية من العثور على حل.\nوقت التنفيذ: {time_str}"
+                f"لم يتم العثور على حل.\nوقت البحث: {time_str}\nالحالات المفحوصة: {states_explored}"
             )
 
     def handle_get_moves_button12(self):
         initial_board_copy = self.Board.deep_copy() 
-        solution_data = dfs_solver(initial_board_copy)
-        solution_path, execution_time = solution_data
-        time_str = f"{execution_time:.4f} ثانية"
+        result = dfs_solver(initial_board_copy)
+        
+        solution_path = result["path"]
+        execution_time = result["time"]
+        memory_used = result["memory"]
+        states_explored = result["explored_states"]
 
-        if solution_path:
+        time_str = f"{execution_time:.4f} ثانية"
+        if solution_path is not None:
             num_moves = len(solution_path)
             messagebox.showinfo(
-            "Solution Found!", 
-            f"The solution requires {num_moves} moves.\nExecution Time: {time_str}")
+                "تم العثور على حل (DFS)!", 
+                f"عدد الحركات: {num_moves} خطوة.\n"
+                f"وقت التنفيذ: {time_str}\n"
+                f"الحالات المخزنة: {memory_used}\n"
+                f"الحالات المستكشفة: {states_explored}"
+            )
             self.solution_path = solution_path
             self.print_game_moves(solution_path)
         else:
-            messagebox.showerror(
-                "No Solution", 
-                f"The algorithm failed to find a solution.\nExecution Time: {time_str}"
-            )
-    
+            messagebox.showerror("No Solution", f"Execution Time: {time_str}")
+
     def handle_get_moves_button13(self):
         initial_board_copy = self.Board.deep_copy() 
-        solution_data = recursive_dfs_solver(initial_board_copy)
-        solution_path, execution_time = solution_data
-        time_str = f"{execution_time:.4f} ثانية"
+        result = recursive_dfs_solver(initial_board_copy)
+        
+        solution_path = result["path"]
+        execution_time = result["time"]
+        memory_used = result["memory"]
+        states_explored = result["explored_states"]
 
-        if solution_path:
+        time_str = f"{execution_time:.4f} ثانية"
+        if solution_path is not None:
             num_moves = len(solution_path)
             messagebox.showinfo(
-            "Solution Found!", 
-            f"The solution requires {num_moves} moves.\nExecution Time: {time_str}")
+                "تم العثور على حل (Recursive DFS)!", 
+                f"عدد الحركات: {num_moves} خطوة.\n"
+                f"وقت التنفيذ: {time_str}\n"
+                f"الحالات المخزنة: {memory_used}\n"
+                f"الحالات المستكشفة: {states_explored}"
+            )
             self.solution_path = solution_path
             self.print_game_moves(solution_path)
         else:
-            messagebox.showerror(
-                "No Solution", 
-                f"The algorithm failed to find a solution.\nExecution Time: {time_str}"
-            )
+            messagebox.showerror("No Solution", f"Execution Time: {time_str}")
+
     def handle_get_moves_button14(self):
         initial_board_copy = self.Board.deep_copy() 
-        solution_data = UCS_solver(initial_board_copy)
-        solution_path, execution_time = solution_data
-        time_str = f"{execution_time:.4f} ثانية"
+        result = UCS_solver(initial_board_copy)
+        
+        solution_path = result["path"]
+        execution_time = result["time"]
+        memory_used = result["memory"]
+        states_explored = result["explored_states"]
 
-        if solution_path:
+        time_str = f"{execution_time:.4f} ثانية"
+        if solution_path is not None:
             num_moves = len(solution_path)
             messagebox.showinfo(
-            "Solution Found!", 
-            f"The solution requires {num_moves} moves.\nExecution Time: {time_str}")
+                "تم العثور على حل (UCS)!", 
+                f"عدد الحركات: {num_moves} خطوة.\n"
+                f"وقت التنفيذ: {time_str}\n"
+                f"الحالات المخزنة: {memory_used}\n"
+                f"الحالات المستكشفة: {states_explored}"
+            )
             self.solution_path = solution_path
             self.print_game_moves(solution_path)
         else:
-            messagebox.showerror(
-                "No Solution", 
-                f"The algorithm failed to find a solution.\nExecution Time: {time_str}"
-            )
-    
+            messagebox.showerror("No Solution", f"Execution Time: {time_str}")
+
     def handle_get_moves_button15(self):
         initial_board_copy = self.Board.deep_copy() 
-        solution_data = hill_climbing_beam_solver(initial_board_copy)
-        solution_path, execution_time = solution_data
-        time_str = f"{execution_time:.4f} ثانية"
+        result = hill_climbing_beam_solver(initial_board_copy)
+        
+        solution_path = result["path"]
+        execution_time = result["time"]
+        memory_used = result["memory"]
+        states_explored = result["explored_states"]
 
-        if solution_path:
+        time_str = f"{execution_time:.4f} ثانية"
+        if solution_path is not None:
             num_moves = len(solution_path)
             messagebox.showinfo(
-            "Solution Found!", 
-            f"The solution requires {num_moves} moves.\nExecution Time: {time_str}")
+                "تم العثور على حل (Beam Search)!", 
+                f"عدد الحركات: {num_moves} خطوة.\n"
+                f"وقت التنفيذ: {time_str}\n"
+                f"الحالات المخزنة: {memory_used}\n"
+                f"الحالات المستكشفة: {states_explored}"
+            )
             self.solution_path = solution_path
             self.print_game_moves(solution_path)
         else:
-            messagebox.showerror(
-                "No Solution", 
-                f"The algorithm failed to find a solution.\nExecution Time: {time_str}"
-            )
+            messagebox.showerror("No Solution", f"Execution Time: {time_str}")
+
     def handle_get_moves_button16(self):
         initial_board_copy = self.Board.deep_copy() 
-        solution_data = a_star_solver(initial_board_copy)
-        solution_path, execution_time = solution_data
-        time_str = f"{execution_time:.4f} ثانية"
+        result = a_star_solver(initial_board_copy)
+        
+        solution_path = result["path"]
+        execution_time = result["time"]
+        memory_used = result["memory"]
+        states_explored = result["explored_states"]
 
-        if solution_path:
+        time_str = f"{execution_time:.4f} ثانية"
+        if solution_path is not None:
             num_moves = len(solution_path)
             messagebox.showinfo(
-            "Solution Found!", 
-            f"The solution requires {num_moves} moves.\nExecution Time: {time_str}")
+                "تم العثور على حل (A*)!", 
+                f"عدد الحركات: {num_moves} خطوة.\n"
+                f"وقت التنفيذ: {time_str}\n"
+                f"الحالات المخزنة: {memory_used}\n"
+                f"الحالات المستكشفة: {states_explored}"
+            )
             self.solution_path = solution_path
             self.print_game_moves(solution_path)
         else:
-            messagebox.showerror(
-                "No Solution", 
-                f"The algorithm failed to find a solution.\nExecution Time: {time_str}"
-            )
+            messagebox.showerror("No Solution", f"Execution Time: {time_str}")
     def print_game_moves(self,moves_list):
     
         directions = {
